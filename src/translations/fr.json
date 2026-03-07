@@ -1,0 +1,45 @@
+{
+    "config": {
+        "description": "Affiche les détails des automatisations.",
+        "labels": {
+            "displayOptions": "Options d'affichage",
+            "showToggle": "Bouton de bascule d'état",
+            "showDescription": "Description de l'automatisation",
+            "showConditions": "Conditions de l'automatisation",
+            "showId": "ID du déclencheur",
+            "showTooltip": "Tooltip détaillé"
+        }
+    },
+    "errors": {
+        "missingEntity": "Vous devez définir au moins une entité",
+        "invalidEntity": "Seules les entités d'automisation sont supportées",
+        "fetchError": "Impossible de récupérer la configuration de l'automatisation",
+        "unsupportedDomain": "\"{domain}\" non supporté",
+        "unknownEntity": "Entité \"{entity}\" inconnue"
+    },
+    "triggers": {
+        "and": " et ",
+        "for": " pendant {for}",
+        "time": {
+            "after": "après {after}",
+            "before": "avant {before}"
+        },
+        "numeric_state": {
+            "above": "supérieur à {above}",
+            "below": "inférieur à {below}"
+        },
+        "sun": {
+            "sunrise": "lever du soleil",
+            "sunset": "coucher du soleil"
+        },
+        "calendar": {
+            "start": "début d'un événement",
+            "end": "fin d'un événement"
+        },
+        "zone": {
+            "enter": "{person} entre dans {zone}",
+            "leave": "{person} sort de {zone}",
+            "in": "{person} est dans {zone}"
+        }
+    }
+}

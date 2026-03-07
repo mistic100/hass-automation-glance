@@ -1,0 +1,45 @@
+{
+    "config": {
+        "description": "Display details about automations.",
+        "labels": {
+            "displayOptions": "Display options",
+            "showToggle": "Automation state toggle",
+            "showDescription": "Automation description",
+            "showConditions": "Automation conditions",
+            "showId": "Trigger ID",
+            "showTooltip": "Details tooltip"
+        }
+    },
+    "errors": {
+        "missingEntity": "You need to define an entity",
+        "invalidEntity": "Only automation entities are supported",
+        "fetchError": "Could not fetch automation config",
+        "unsupportedDomain": "\"{domain}\" unsupported",
+        "unknownEntity": "Unknown entity \"{entity}\""
+    },
+    "triggers": {
+        "and": " and ",
+        "for": " for {for}",
+        "time": {
+            "after": "after {after}",
+            "before": "before {before}"
+        },
+        "numeric_state": {
+            "above": "above {above}",
+            "below": "below {below}"
+        },
+        "sun": {
+            "sunrise": "sunrise",
+            "sunset": "sunset"
+        },
+        "calendar": {
+            "start": "event starts",
+            "end": "event ends"
+        },
+        "zone": {
+            "enter": "{person} enters {zone}",
+            "leave": "{person} leaves {zone}",
+            "in": "{person} is in {zone}"
+        }
+    }
+}

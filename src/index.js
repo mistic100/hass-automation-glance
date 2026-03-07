@@ -1,14 +1,19 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { version } from '../package.json';
+import { localize } from './localize';
 import {
     renderCalendar,
     renderConversation,
+    renderEvent,
     renderNumericState,
-    renderState, renderSun,
+    renderState,
+    renderSun,
+    renderTag,
+    renderTemplate,
     renderTime,
     renderTimePattern,
     renderTrigger,
-    renderZone
+    renderZone,
 } from './renderers.js';
 
 const TRIGGERS_ICON = {
@@ -16,9 +21,11 @@ const TRIGGERS_ICON = {
     calendar: 'mdi:calendar',
     conversation: 'mdi:forum-outline',
     device: 'mdi:devices',
+    event: 'mdi:gesture-double-tap',
     numeric_state: 'mdi:numeric',
     state: 'mdi:state-machine',
     sun: 'mdi:weather-sunny',
+    tag: 'mdi:nfc-variant',
     template: 'mdi:code-braces',
     time_pattern: 'mdi:av-timer',
     time: 'mdi:clock-outline',
@@ -28,13 +35,15 @@ const TRIGGERS_ICON = {
 };
 
 const TRIGGERS_RENDERERS = {
-    _: (hass, trigger) => html`Unsupported: ${trigger.trigger}`,
+    _: (hass, trigger) => localize(hass, 'errors.unsupportedDomain', { domain: trigger.trigger ?? trigger.condition }),
     calendar: renderCalendar,
     conversation: renderConversation,
+    event: renderEvent,
     numeric_state: renderNumericState,
     state: renderState,
     sun: renderSun,
-    template: () => '',
+    tag: renderTag,
+    template: renderTemplate,
     time_pattern: renderTimePattern,
     time: renderTime,
     trigger: renderTrigger,
@@ -108,7 +117,7 @@ class AbstractAutomationBadges extends LitElement {
                 ${content ? html`<span>${content}</span>` : ''}
             </ha-badge>
             ${this.config.showTooltip
-            ? html`
+                ? html`
                 <ha-tooltip .for=${triggerId}>
                     <pre>${JSON.stringify(data, null, 2)}</pre>
                 </ha-tooltip>
@@ -137,6 +146,12 @@ class AutomationGlanceTriggers extends AbstractAutomationBadges {
                 }
                 if (trigger.trigger === 'conversation' && Array.isArray(trigger.command)) {
                     return trigger.command.map(command => ({ ...trigger, command }));
+                }
+                if (trigger.trigger === 'event' && Array.isArray(trigger.event_type)) {
+                    return trigger.event_type.map(event_type => ({ ...trigger, event_type }));
+                }
+                if (trigger.trigger === 'tag' && Array.isArray(trigger.tag_id)) {
+                    return trigger.tag_id.map(tag_id => ({ ...trigger, tag_id }));
                 }
                 return trigger;
             })
@@ -229,16 +244,16 @@ class AutomationGlanceItem extends LitElement {
             </hui-generic-entity-row>
 
             ${this._error
-            ? html`
+                ? html`
                 <ha-alert alert-type="error">
                     ${this._error}
                 </ha-alert>
             ` : ''}
 
             ${this._automation
-            ? html`
-                ${this._automation.description && this.config.showDescription
                 ? html`
+                ${this._automation.description && this.config.showDescription
+                        ? html`
                     <div class="description">
                         <ha-markdown .content=${this._automation.description}></ha-markdown>
                     </div>
@@ -251,7 +266,7 @@ class AutomationGlanceItem extends LitElement {
                 ></automation-glance-triggers>
 
                 ${this._automation.conditions?.length && this.config.showConditions
-                ? html`
+                        ? html`
                     <automation-glance-conditions
                         .hass=${this.hass}
                         .config=${this.config}
@@ -287,7 +302,7 @@ class AutomationGlanceItem extends LitElement {
 
         } catch (err) {
             console.error(err);
-            this._error = 'Could not fetch automation config';
+            this._error = localize(this.hass, 'errors.fetchError');
             this._automation = null;
         }
     }
@@ -341,7 +356,10 @@ class AutomationGlanceCard extends LitElement {
 
     setConfig(config) {
         if (!config.entity?.length) {
-            throw new Error("You need to define an entity");
+            throw new Error(localize(null, 'errors.missingEntity'));
+        }
+        if (config.entity.some(id => !id.startsWith('automation.'))) {
+            throw new Error(localize(null, 'errors.invalidEntity'));
         }
         this._config = config;
     }
@@ -364,7 +382,7 @@ class AutomationGlanceCard extends LitElement {
                 {
                     type: 'expandable',
                     name: '',
-                    title: 'Display options',
+                    title: localize(null, 'config.labels.displayOptions'),
                     flatten: true,
                     schema: [
                         {
@@ -383,20 +401,14 @@ class AutomationGlanceCard extends LitElement {
                 },
             ],
             computeLabel: (schema) => {
-                if (schema.name === 'showToggle') {
-                    return 'Automation state toggle';
-                }
-                if (schema.name === 'showDescription') {
-                    return 'Automation description';
-                }
-                if (schema.name === 'showConditions') {
-                    return 'Automation conditions';
-                }
-                if (schema.name === 'showId') {
-                    return 'Trigger ID';
-                }
-                if (schema.name === 'showTooltip') {
-                    return 'Trigger tooltip';
+                if ([
+                    'showToggle',
+                    'showDescription',
+                    'showConditions',
+                    'showId',
+                    'showTooltip',
+                ].includes(schema.name)) {
+                    return localize(null, 'config.labels.' + schema.name);
                 }
             },
             computeHelper: (schema) => {
@@ -422,7 +434,7 @@ window.customCards.push({
     type: 'automation-glance',
     name: 'Automation Glance',
     preview: false,
-    description: 'Display details about automations',
+    description: localize(null, 'config.description'),
     documentationURL: 'https://github.com/mistic100/hass-automation-glance',
 });
 

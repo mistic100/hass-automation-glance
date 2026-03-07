@@ -15,9 +15,11 @@ The following domains are supported:
 
 - calendar
 - conversation
+- event
 - numeric_state
 - state
 - sun
+- tag
 - template
 - time_pattern
 - time
@@ -26,9 +28,6 @@ The following domains are supported:
 - zone
 
 For other domains, please open an issue.
-
-> [!NOTE]
-> Only English is supported for now.
 
 
 ## Installation

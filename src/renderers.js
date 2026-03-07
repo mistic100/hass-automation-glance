@@ -1,11 +1,12 @@
 import { html } from 'lit';
+import { localize, localizeState, localizeWeekday } from './localize';
 
 function getEntityName(hass, entityId) {
     const entity = hass.states[entityId];
     if (entity) {
         return entity.attributes?.friendly_name ?? entityId;
     } else {
-        txt = `Unknown entity ${entityId}`;
+        return localize(hass, 'errors.unknownEntity', { entity: entityId });
     }
 }
 
@@ -40,11 +41,15 @@ function formatOffset(triggerOffset) {
     }
 }
 
-function formatFor(triggerFor) {
+function formatFor(hass, triggerFor) {
     if (typeof triggerFor === 'object') {
-        return ` for ${leftPad(triggerFor.hours ?? 0, 2, '0')}:${leftPad(triggerFor.minutes ?? 0, 2, '0')}:${leftPad(triggerFor.seconds ?? 0, 2, '0')}`;
+        return localize(hass, 'triggers.for', {
+            for: `${leftPad(triggerFor.hours ?? 0, 2, '0')}:${leftPad(triggerFor.minutes ?? 0, 2, '0')}:${leftPad(triggerFor.seconds ?? 0, 2, '0')}`
+        });
     } else if (triggerFor) {
-        return ` for ${formatTime(triggerFor)}`;
+        return localize(hass, 'triggers.for', {
+            for: formatTime(triggerFor)
+        });
     } else {
         return '';
     }
@@ -71,26 +76,36 @@ export function renderTime(hass, trigger) {
     // for conditions
     if (trigger.after) {
         if (isEntityId(trigger.after)) {
-            content += `After ${getEntityName(hass, trigger.after)}`;
+            content += localize(hass, 'triggers.time.after', {
+                after: getEntityName(hass, trigger.after)
+            });
         } else {
-            content += `After ${formatTime(trigger.after)}`;
+            content += localize(hass, 'triggers.time.after', {
+                after: formatTime(trigger.after)
+            });
         }
     }
     if (trigger.before) {
         if (trigger.after) {
-            content += ' and ';
+            content += localize(hass, 'triggers.and');
         }
         if (isEntityId(trigger.before)) {
-            content += `Before ${getEntityName(hass, trigger.before)}`;
+            content += localize(hass, 'triggers.time.before', {
+                before: getEntityName(hass, trigger.before)
+            });
         } else {
-            content += `Before ${formatTime(trigger.before)}`;
+            content += localize(hass, 'triggers.time.before', {
+                before: formatTime(trigger.before)
+            });
         }
     }
 
-    if (Array.isArray(trigger.weekday)) {
-        content += ` (${trigger.weekday.join(', ')})`;
-    } else if (trigger.weekday) {
-        content += ` (${trigger.weekday})`;
+    if (trigger.weekday) {
+        content += ` (${
+            castArray(trigger.weekday)
+                .map(weekday => localizeWeekday(hass, weekday))
+                .join(', ')
+        })`;
     }
 
     return content;
@@ -101,42 +116,54 @@ export function renderTimePattern(hass, trigger) {
 }
 
 export function renderState(hass, trigger) {
+    const entity = hass.states[trigger.entity_id];
+
+    const localizeStates = (states) => {
+        return castArray(states)
+            .map(state => localizeState(hass, state, entity))
+            .join(', ');
+    };
+
     let content = getEntityName(hass, trigger.entity_id);
 
     if (trigger.attribute) {
         content += ` [${trigger.attribute}]`;
     }
 
+    content+= ': ';
+
     // for triggers
     if (trigger.from) {
-        content = html`${content}: ${castArray(trigger.from).join(',')}`;
+        content = html`${content} ${localizeStates(trigger.from)}`;
     } else if (trigger.not_from) {
-        content = html`${content}: <del>${castArray(trigger.not_from).join(',')}</del>`;
+        content = html`${content} <del>${localizeStates(trigger.not_from)}</del>`;
     }
     if ((trigger.from || trigger.not_from) && !trigger.to && !trigger.not_to) {
         content = html`${content} → ☆`;
     }
     if (!trigger.from && !trigger.not_from && (trigger.to || trigger.not_to)) {
-        content = html`${content}: ☆`
+        content = html`${content} ☆`
     }
     if (trigger.to) {
-        content = html`${content} → ${castArray(trigger.to).join(',')}`;
+        content = html`${content} → ${localizeStates(trigger.to)}`;
     } else if (trigger.not_to) {
-        content = html`${content} → <del>${castArray(trigger.not_to).join(',')}</del>`;
+        content = html`${content} → <del>${localizeStates(trigger.not_to)}</del>`;
     }
 
     // for conditions
     if (trigger.state) {
-        content = html`${content}: ${castArray(trigger.state).map(state => {
-            if (isEntityId(state)) {
-                return getEntityName(hass, state);
-            } else {
-                return state;
-            }
-        }).join(',')}`;
+        content = html`${content} ${
+            castArray(trigger.state).map(state => {
+                if (isEntityId(state)) {
+                    return getEntityName(hass, state);
+                } else {
+                    return localizeState(hass, state, entity);
+                }
+            }).join(',')
+        }`;
     }
 
-    content = html`${content}${formatFor(trigger.for)}`;
+    content = html`${content}${formatFor(hass, trigger.for)}`;
 
     return content;
 }
@@ -147,32 +174,44 @@ export function renderNumericState(hass, trigger) {
     if (trigger.attribute) {
         content += ` [${trigger.attribute}]`;
     } else if (trigger.value_template) {
-        content += ' {tpl}';
+        content += ' {...}';
     }
 
+    content+= ': ';
+
     if (trigger.above) {
-        if (typeof trigger.above === 'number') {
-            content += `: above ${trigger.above}`;
+        if (isEntityId(trigger.above)) {
+            content += localize(hass, 'triggers.numeric_state.above', {
+                above: getEntityName(hass, trigger.above)
+            }); 
         } else {
-            content += `: above ${getEntityName(hass, trigger.above)}`;
+            content += localize(hass, 'triggers.numeric_state.above', {
+                above: trigger.above
+            });
         }
     }
     if (trigger.below) {
         if (trigger.above) {
-            content += ' and';
-        } else {
-            content += ':';
+            content += localize(hass, 'triggers.and');
         }
-        if (typeof trigger.below === 'number') {
-            content += ` below ${trigger.below}`;
+        if (isEntityId(trigger.below)) {
+            content += localize(hass, 'triggers.numeric_state.below', {
+                below: getEntityName(hass, trigger.below)
+            }); 
         } else {
-            content += ` below ${getEntityName(hass, trigger.below)}`;
+            content += localize(hass, 'triggers.numeric_state.below', {
+                below: trigger.below
+            });
         }
     }
 
-    content += formatFor(trigger.for);
+    content += formatFor(hass, trigger.for);
 
     return content;
+}
+
+export function renderTemplate(hass, trigger) {
+    return `{...} ${formatFor(hass, trigger.for)}`;
 }
 
 export function renderSun(hass, trigger) {
@@ -180,18 +219,25 @@ export function renderSun(hass, trigger) {
 
     // for triggers
     if (trigger.event) {
-        return trigger.event + formatOffset(trigger.offset);
+        content += localize(hass, 'triggers.sun.' + trigger.event);
+        content += formatOffset(trigger.offset);
     }
 
     // for conditions
     if (trigger.after) {
-        content += `After ${trigger.after}${formatOffset(trigger.after_offset)}`;
+        content += localize(hass, 'triggers.time.after', {
+            after: localize(hass, 'triggers.sun.' + trigger.after),
+        });
+        content += formatOffset(trigger.after_offset);
     }
     if (trigger.before) {
         if (trigger.after) {
-            content += ' and ';
+            content += localize(hass, 'triggers.and');
         }
-        content += `Before ${trigger.before}${formatOffset(trigger.before_offset)}`;
+        content += localize(hass, 'triggers.time.before', {
+            before: localize(hass, 'triggers.sun.' + trigger.before),
+        });
+        content += formatOffset(trigger.before_offset);
     }
 
     return content;
@@ -206,23 +252,40 @@ export function renderTrigger(hass, condition) {
 }
 
 export function renderCalendar(hass, trigger) {
-    return `${getEntityName(hass, trigger.entity_id)}: event ${trigger.event}${formatOffset(trigger.offset)}`;
+    let content = getEntityName(hass, trigger.entity_id);
+    content += ': ';
+    content += localize(hass, 'triggers.calendar.' + trigger.event);
+    content += formatOffset(trigger.offset);
+    return content;
 }
 
 export function renderZone(hass, trigger) {
-    let content = getEntityName(hass, trigger.entity_id);
+    const person = getEntityName(hass, trigger.entity_id);
+    const zone = getEntityName(hass, trigger.zone);
 
     // for triggers
     if (trigger.event) {
-        content += ` ${trigger.event}`;
+        return localize(hass, 'triggers.zone.' + trigger.event, {
+            person,
+            zone,
+        });
     }
 
     // for conditions
     if (trigger.condition) {
-        content += ' in';
+        return localize(hass, 'triggers.zone.in', {
+            person,
+            zone,
+        });
     }
 
-    content += ` ${getEntityName(hass, trigger.zone)}`;
+    return '';
+}
 
-    return content;
+export function renderEvent(hass, trigger) {
+    return html`<code>${trigger.event_type}</code>`;
+}
+
+export function renderTag(hass, trigger) {
+    return html`<code>${trigger.tag_id}</code>`;
 }
