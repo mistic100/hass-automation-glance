@@ -6,7 +6,8 @@
   "author": "mistic100 <contact@git.strangeplanet.fr>",
   "license": "MIT",
   "scripts": {
-    "build": "esbuild src/index.js --bundle --minify --outfile=dist/automation-glance.js"
+    "build": "esbuild src/index.js --bundle --minify --outfile=dist/automation-glance.js",
+    "watch": "esbuild src/index.js --bundle --watch --outfile=dist/automation-glance.js"
   },
   "dependencies": {
     "lit": "^3.3.2"

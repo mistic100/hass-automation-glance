@@ -18,6 +18,10 @@ import {
 
 const TRIGGERS_ICON = {
     _: 'mdi:robot',
+    and: 'mdi:ampersand',
+    not: 'mdi:not-equal-variant',
+    or: 'mdi:gate-or',
+
     calendar: 'mdi:calendar',
     conversation: 'mdi:forum-outline',
     device: 'mdi:devices',
@@ -61,22 +65,14 @@ class AbstractAutomationBadges extends LitElement {
     static styles = css`
         :host {
             display: flex;
+            flex-wrap: wrap;
             gap: var(--ha-space-2);
             padding: var(--ha-space-2);
-            flex-wrap: wrap;
             background: var(--primary-background-color);
             border-width: var(--ha-card-border-width, 1px);
             border-style: solid;
             border-color: var(--ha-card-border-color,var(--divider-color, #e0e0e0));
             border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
-        }
-
-        ha-icon {
-            margin-left: -4px;
-
-            &:last-child {
-                margin-right: -4px;
-            }
         }
 
         .trigger-id {
@@ -93,6 +89,14 @@ class AbstractAutomationBadges extends LitElement {
 
         ha-badge {
             --ha-font-weight-medium: normal;
+
+            ha-icon {
+                margin-left: -4px;
+
+                &:last-child {
+                    margin-right: -4px;
+                }
+            }
         }
 
         ha-tooltip {
@@ -100,14 +104,14 @@ class AbstractAutomationBadges extends LitElement {
         }
     `;
 
-    renderBadge(data, index) {
-        const triggerId = `trigger-${this.automation.id}${index}`;
+    renderBadge(data, id) {
+        const badgeId = `${this.automation.id}-${id}`;
         const icon = TRIGGERS_ICON[data.trigger ?? data.condition] ?? TRIGGERS_ICON._;
         const content = data.alias ?? (TRIGGERS_RENDERERS[data.trigger ?? data.condition] ?? TRIGGERS_RENDERERS._)(this.hass, data);
 
         return html`
             <ha-badge
-                id=${triggerId}
+                id=${badgeId}
                 .type="badge"
             >
                 ${data.trigger && data.id && this.config.showId ? html`<code class="trigger-id">${data.id}</code>` : ''}
@@ -118,7 +122,7 @@ class AbstractAutomationBadges extends LitElement {
             </ha-badge>
             ${this.config.showTooltip
                 ? html`
-                <ha-tooltip .for=${triggerId}>
+                <ha-tooltip .for=${badgeId}>
                     <pre>${JSON.stringify(data, null, 2)}</pre>
                 </ha-tooltip>
             ` : ''}
@@ -155,7 +159,7 @@ class AutomationGlanceTriggers extends AbstractAutomationBadges {
                 }
                 return trigger;
             })
-            .map((trigger, i) => this.renderBadge(trigger, i));
+            .map((trigger, i) => this.renderBadge(trigger, `trigger-${i}`));
     }
 }
 customElements.define('automation-glance-triggers', AutomationGlanceTriggers);
@@ -174,6 +178,34 @@ class AutomationGlanceConditions extends AbstractAutomationBadges {
                 var(--card-background-color) 20px
             );
         }
+
+        .bloc {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--ha-space-2);
+            padding: var(--ha-space-1);
+            border-width: var(--ha-card-border-width, 1px);
+            border-style: solid;
+            border-color: var(--ha-card-border-color,var(--divider-color, #e0e0e0));
+            border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
+        }
+
+        .leading-icon-wrapper {
+            background-color: var(--ha-color-fill-neutral-loud-resting);
+            border-radius: var(--ha-border-radius-md);
+            padding: var(--ha-space-1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(45deg);
+
+            ha-icon {
+                --mdc-icon-size: 18px;
+                transform: rotate(-45deg);
+                line-height: 1;
+            }
+        }
     `;
 
     render() {
@@ -181,7 +213,11 @@ class AutomationGlanceConditions extends AbstractAutomationBadges {
             return nothing;
         }
 
-        return this.automation.conditions
+        return this.renderConditions(this.automation.conditions);
+    }
+
+    renderConditions(conditions, rootId = 'cond') {
+        return conditions
             .filter(condition => condition.enabled !== false)
             .flatMap(condition => {
                 if (condition.alias) {
@@ -195,7 +231,23 @@ class AutomationGlanceConditions extends AbstractAutomationBadges {
                 }
                 return condition;
             })
-            .map((condition, i) => this.renderBadge(condition, i))
+            .map((condition, i) => {
+                const id = `${rootId}-${i}`;
+                if (['and', 'or', 'not'].includes(condition.condition)) {
+                    const icon = TRIGGERS_ICON[condition.condition];
+
+                    return html`
+                        <div class="bloc">
+                            <div class="leading-icon-wrapper">
+                                <ha-icon .icon=${icon}></ha-icon>
+                            </div>
+                            ${this.renderConditions(condition.conditions, id)}
+                        </div>
+                    `;
+                } else {
+                    return this.renderBadge(condition, id);
+                }
+            });
     }
 }
 customElements.define('automation-glance-conditions', AutomationGlanceConditions);
