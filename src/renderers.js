@@ -1,4 +1,4 @@
-import { html } from 'https://cdn.jsdelivr.net/npm/lit@3.3.2/+esm';
+import { html } from 'lit';
 
 function getEntityName(hass, entityId) {
     const entity = hass.states[entityId];

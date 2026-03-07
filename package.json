@@ -1,0 +1,17 @@
+{
+  "name": "automation-glance",
+  "version": "0.0.0",
+  "private": true,
+  "repository": "git@github.com:mistic100/hass-automation-glance.git",
+  "author": "mistic100 <contact@git.strangeplanet.fr>",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild src/index.js --bundle --outfile=dist/automation-glance.js"
+  },
+  "dependencies": {
+    "lit": "^3.3.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.3"
+  }
+}

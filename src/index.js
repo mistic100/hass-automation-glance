@@ -1,5 +1,15 @@
-import { LitElement, css, html, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3.3.2/+esm';
-import { renderCalendar, renderConversation, renderNumericState, renderState, renderSun, renderTime, renderTimePattern, renderTrigger, renderZone } from './renderers.js';
+import { LitElement, css, html, nothing } from 'lit';
+import { version } from '../package.json';
+import {
+    renderCalendar,
+    renderConversation,
+    renderNumericState,
+    renderState, renderSun,
+    renderTime,
+    renderTimePattern,
+    renderTrigger,
+    renderZone
+} from './renderers.js';
 
 const TRIGGERS_ICON = {
     _: 'mdi:robot',
@@ -354,7 +364,7 @@ class AutomationGlanceCard extends LitElement {
                 {
                     type: 'expandable',
                     name: '',
-                    name: 'Display options',
+                    title: 'Display options',
                     flatten: true,
                     schema: [
                         {
@@ -398,7 +408,7 @@ class AutomationGlanceCard extends LitElement {
     static getStubConfig() {
         return {
             showToggle: true,
-            showConditions: true,
+            showDescription: true,
             showConditions: true,
             showId: true,
             showTooltip: true,
@@ -416,7 +426,7 @@ window.customCards.push({
     documentationURL: 'https://github.com/mistic100/hass-automation-glance',
 });
 
-console.info('%c AUTOMATION-GLANCE %c v1.0.0 ',
+console.info('%c AUTOMATION-GLANCE %c v' + version + ' ',
     'color: orange; font-weight: bold; background: black',
     'color: white; font-weight: bold; background: dimgray'
 );
