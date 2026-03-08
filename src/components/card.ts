@@ -57,7 +57,15 @@ export class AutomationGlanceCard extends LitElement {
         if (config.entity.some(id => !id.startsWith('automation.'))) {
             throw new Error(localize(null, 'errors.invalidEntity'));
         }
-        this.config = config;
+
+        this.config = {
+            showToggle: true,
+            showDescription: true,
+            showConditions: true,
+            showId: true,
+            showTooltip: true,
+            ...config,
+        };
     }
 
     static getConfigForm() {
@@ -86,11 +94,11 @@ export class AutomationGlanceCard extends LitElement {
                             name: '',
                             flatten: true,
                             schema: [
-                                { name: 'showToggle', selector: { boolean: {} } },
-                                { name: 'showDescription', selector: { boolean: {} } },
-                                { name: 'showConditions', selector: { boolean: {} } },
-                                { name: 'showId', selector: { boolean: {} } },
-                                { name: 'showTooltip', selector: { boolean: {} } },
+                                { name: 'showToggle', selector: { boolean: {} }, default: true },
+                                { name: 'showDescription', selector: { boolean: {} }, default: true },
+                                { name: 'showConditions', selector: { boolean: {} }, default: true },
+                                { name: 'showId', selector: { boolean: {} }, default: true },
+                                { name: 'showTooltip', selector: { boolean: {} }, default: true },
                             ]
                         }
                     ]
@@ -107,19 +115,6 @@ export class AutomationGlanceCard extends LitElement {
                     return localize(null, 'config.labels.' + schema.name);
                 }
             },
-            computeHelper: (schema: { name: string }) => {
-
-            },
-        };
-    }
-
-    static getStubConfig() {
-        return {
-            showToggle: true,
-            showDescription: true,
-            showConditions: true,
-            showId: true,
-            showTooltip: true,
         };
     }
 }
