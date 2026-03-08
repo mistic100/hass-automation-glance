@@ -11,10 +11,11 @@ Home Assistant card to display details about automations.
 - Automation description
 - List of triggers and conditions
 
-The following domains are supported:
+The following trigger domains are supported:
 
 - calendar
 - conversation
+- device
 - event
 - numeric_state
 - state
@@ -27,7 +28,11 @@ The following domains are supported:
 - webhook
 - zone
 
-For other domains, please open an issue.
+Limitations:
+
+- uses custom translations, not always identical to the automation editor (but shorter)
+- device triggers are not translated
+- automation actions are not displayed, this is currently not the goal of this card
 
 
 ## Installation

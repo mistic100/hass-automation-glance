@@ -4,6 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { localize } from '../localize';
 import { renderCalendar } from '../renderers/calendar';
 import { renderConversation } from '../renderers/conversation';
+import { renderDevice } from '../renderers/device';
 import { renderEvent } from '../renderers/event';
 import { renderNumericState } from '../renderers/numericState';
 import { renderState } from '../renderers/state';
@@ -42,6 +43,7 @@ const RENDERERS: Record<string, RenderFn> = {
     _: (hass, trigger) => localize(hass, 'errors.unsupportedDomain', { domain: trigger.trigger ?? trigger.condition }),
     calendar: renderCalendar,
     conversation: renderConversation,
+    device: renderDevice,
     event: renderEvent,
     numeric_state: renderNumericState,
     state: renderState,

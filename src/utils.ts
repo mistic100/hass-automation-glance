@@ -10,6 +10,14 @@ export function getEntityName(hass: HomeAssistant, entityId: string): string {
     }
 }
 
+export function getEntityNameHex(hass: HomeAssistant, id: string): string {
+    if (window.automationGlanceEntities[id]) {
+        return getEntityName(hass, window.automationGlanceEntities[id]);
+    } else {
+        return localize(hass, 'errors.unknownEntity', { entity: id });
+    }
+}
+
 export function isEntityId(val: any): boolean {
     return typeof val === 'string' && val.split('.').length === 2;
 }

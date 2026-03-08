@@ -10,9 +10,9 @@ export class AutomationGlanceItem extends LitElement {
     @property({ attribute: false }) public hass: HomeAssistant;
     @property({ attribute: false }) public config: AutomationGlanceConfig;
     @property({ type: String }) public entityId: string;
-    
+
     @state() private automation: AutomationConfig;
-    @state() private error: string ;
+    @state() private error: string;
 
     #currentId: string = null;
 
@@ -96,10 +96,29 @@ export class AutomationGlanceItem extends LitElement {
         }
 
         try {
-            const result = await this.hass.callWS<any>({
+            const result = await this.hass.callWS<{ config: AutomationConfig }>({
                 type: 'automation/config',
                 entity_id: this.entityId
             });
+
+            // Load all device entities only once
+            // FIXME: invalidate cache on entities update
+            if (
+                result.config.triggers.some(trigger => trigger.trigger === 'device')
+                && !window.automationGlanceEntities
+            ) {
+                window.automationGlanceEntities = {};
+
+                const entities = await this.hass.callWS<any[]>({
+                    type: 'config/entity_registry/list',
+                });
+
+                entities
+                    .filter(entity => entity.device_id)
+                    .forEach(entity => {
+                        window.automationGlanceEntities[entity.id] = entity.entity_id;
+                    });
+            }
 
             this.automation = result.config;
             this.error = null;

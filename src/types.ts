@@ -1,4 +1,5 @@
 import { HomeAssistant } from 'custom-card-helpers';
+import { html } from 'lit';
 
 export type AutomationGlanceConfig = {
     entity: string[];

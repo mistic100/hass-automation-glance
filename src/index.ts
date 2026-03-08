@@ -4,8 +4,8 @@ import './components/card';
 import './components/item';
 import { localize } from './localize';
 
-(window as any).customCards = (window as any).customCards || [];
-(window as any).customCards.push({
+window.customCards = window.customCards || [];
+window.customCards.push({
     type: 'automation-glance',
     name: 'Automation Glance',
     preview: false,
