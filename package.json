@@ -5,11 +5,13 @@
   "repository": "git@github.com:mistic100/hass-automation-glance.git",
   "author": "mistic100 <contact@git.strangeplanet.fr>",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "build": "esbuild src/index.js --bundle --minify --outfile=dist/automation-glance.js",
-    "watch": "esbuild src/index.js --bundle --watch --outfile=dist/automation-glance.js"
+    "build": "esbuild src/index.ts --bundle --minify --outfile=dist/automation-glance.js",
+    "watch": "esbuild src/index.ts --bundle --watch --outfile=dist/automation-glance.js"
   },
   "dependencies": {
+    "custom-card-helpers": "^2.0.0",
     "lit": "^3.3.2"
   },
   "devDependencies": {

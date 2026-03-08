@@ -1,15 +1,17 @@
+import { HomeAssistant } from 'custom-card-helpers';
+import { HassEntity } from 'home-assistant-js-websocket';
 import * as en from './translations/en.json';
 import * as fr from './translations/fr.json';
 
-const languages = {
+const languages: Record<string, any> = {
     en,
     fr,
 };
 
-export function localize(hass, key, params = {}) {
+export function localize(hass: HomeAssistant, key: string, params: Record<string, any> = {}): string {
     const lang = hass?.language ?? navigator.language.slice(0, 2);
 
-    let translated;
+    let translated: string;
     try {
         translated = key.split('.').reduce((k, i) => k[i], languages[lang]);
     } catch {
@@ -28,7 +30,7 @@ export function localize(hass, key, params = {}) {
     return translated;
 }
 
-export function localizeWeekday(hass, weekday) {
+export function localizeWeekday(hass: HomeAssistant, weekday: string): string {
     const key = {
         fri: 'friday',
         mon: 'monday',
@@ -42,7 +44,7 @@ export function localizeWeekday(hass, weekday) {
     return hass.localize('ui.weekdays.' + key) ?? key;
 }
 
-export function localizeState(hass, state, entity) {
+export function localizeState(hass: HomeAssistant, state: string, entity: HassEntity): string {
     if (['unknown', 'unavailable'].includes(state)) {
         return hass.localize('state.default.' + state);
     }
@@ -52,7 +54,7 @@ export function localizeState(hass, state, entity) {
     }
 
     const domain = entity.entity_id.split('.')[0];
-    const deviceClass = entity.device_class ?? '_';
+    const deviceClass = entity.attributes?.device_class ?? '_';
 
     return hass.localize(`component.${domain}.entity_component.${deviceClass}.state.${state}`)
         || hass.localize(`component.${domain}.entity_component._.state.${state}`)
