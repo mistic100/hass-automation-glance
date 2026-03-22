@@ -194,15 +194,28 @@ export class AutomationGlanceConditions extends AbstractAutomationBadges {
             border-style: solid;
             border-color: var(--ha-card-border-color,var(--divider-color, #e0e0e0));
             border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
+            background: var(--primary-background-color);
+
+            /* alternate colors */
+            .bloc {
+                --ha-card-background: var(--primary-background-color);
+                background: var(--card-background-color);
+
+                .bloc {
+                    --ha-card-background: initial;
+                    background: var(--primary-background-color);
+                }
+            }
         }
 
         .leading-icon-wrapper {
-            background-color: var(--ha-color-fill-neutral-loud-resting);
-            border-radius: var(--ha-border-radius-md);
-            padding: var(--ha-space-1);
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-left: var(--ha-space-1);
+            padding: var(--ha-space-1);
+            background-color: var(--ha-color-fill-neutral-loud-resting);
+            border-radius: var(--ha-border-radius-md);
             transform: rotate(45deg);
 
             ha-icon {
