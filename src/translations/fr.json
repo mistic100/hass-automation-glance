@@ -22,7 +22,9 @@
         "for": " pendant {for}",
         "time": {
             "after": "après {after}",
-            "before": "avant {before}"
+            "before": "avant {before}",
+            "workdays": "jours de travail",
+            "weekend": "weekend"
         },
         "numeric_state": {
             "above": "supérieur à {above}",

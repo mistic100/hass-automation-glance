@@ -32,13 +32,13 @@ export function localize(hass: HomeAssistant, key: string, params: Record<string
 
 export function localizeWeekday(hass: HomeAssistant, weekday: string): string {
     const key = {
-        fri: 'friday',
         mon: 'monday',
-        sat: 'saturday',
-        sun: 'sunday',
-        thu: 'thursday',
         tue: 'tuesday',
         wed: 'wednesday',
+        thu: 'thursday',
+        fri: 'friday',
+        sat: 'saturday',
+        sun: 'sunday',
     }[weekday];
 
     return hass.localize('ui.weekdays.' + key) ?? key;

@@ -2,6 +2,14 @@ import { localize, localizeWeekday } from '../localize';
 import { RenderFn } from '../types';
 import { castArray, formatOffset, formatTime, getEntityName, isEntityId } from '../utils';
 
+const WORKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
+const WEEKEND = ['sat', 'sun'];
+const WEEK = [...WORKDAYS, ...WEEKEND];
+
+function weekdaysEqual(array1: string[], array2: string[]): boolean {
+    return [...array1].sort().toString() === [...array2].sort().toString();
+}
+
 export const renderTime: RenderFn = (hass, trigger) => {
     let content = '';
 
@@ -44,11 +52,17 @@ export const renderTime: RenderFn = (hass, trigger) => {
     }
 
     if (trigger.weekday) {
-        content += ` (${
-            castArray(trigger.weekday)
+        const weekdays = castArray(trigger.weekday);
+        if (weekdaysEqual(weekdays, WORKDAYS)) {
+            content += ` (${localize(hass, 'triggers.time.workdays')})`;
+        } else if (weekdaysEqual(weekdays, WEEKEND)) {
+            content += ` (${localize(hass, 'triggers.time.weekend')})`;
+        } else if (!weekdaysEqual(weekdays, WEEK)) {
+            content += ` (${castArray(trigger.weekday)
                 .map(weekday => localizeWeekday(hass, weekday))
                 .join(', ')
-        })`;
+                })`;
+        }
     }
 
     return content;
