@@ -11,6 +11,17 @@ window.customCards.push({
     preview: false,
     description: localize(null, 'config.description'),
     documentationURL: 'https://github.com/mistic100/hass-automation-glance',
+    getEntitySuggestion: (hass, entityId) => {
+        if (entityId.split('.')[0] !== 'automation') {
+            return null;
+        }
+        return {
+            config: {
+                type: 'custom:automation-glance',
+                entity: [entityId],
+            },
+        };
+    },
 });
 
 console.info('%c AUTOMATION-GLANCE %c v' + version + ' ',
