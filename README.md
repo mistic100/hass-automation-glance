@@ -63,7 +63,7 @@ Simply click on the button to open the repository in HACS or search for "Automat
 
 ## Usage
 
-The card can be configure through the UI or manually.
+The card can be configured through the UI or manually.
 
 ### Example configuration
 
@@ -89,7 +89,7 @@ showTooltip: true
 | `type` **(required)** | string | | `custom:automation-glance` |
 | `entity` **(required)** | list | | List of `automation` entities |
 | `title` | string | | Title of the card |
-| `showDescription` | boolean | `true` | Displays the description of the autamation |
+| `showDescription` | boolean | `true` | Displays the description of the automation |
 | `showToggle` | boolean | `true` | Displays the automation activation toggle |
 | `showConditions` | boolean | `true` | Displays conditions bellow triggers |
 | `showId` | boolean | `true` | Displays specific triggers id as small badge |
