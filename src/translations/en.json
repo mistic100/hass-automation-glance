@@ -6,6 +6,7 @@
             "showToggle": "Automation state toggle",
             "showDescription": "Automation description",
             "showConditions": "Automation conditions",
+            "showConditionStatus": "Conditions status",
             "showId": "Trigger ID",
             "showTooltip": "Details tooltip"
         }

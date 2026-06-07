@@ -7,6 +7,7 @@ export type AutomationGlanceConfig = {
     showToggle?: boolean;
     showDescription?: boolean;
     showConditions?: boolean;
+    showConditionStatus?: boolean;
     showId?: boolean;
     showTooltip?: boolean;
 };

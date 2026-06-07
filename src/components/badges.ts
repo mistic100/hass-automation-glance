@@ -79,8 +79,8 @@ class AbstractAutomationBadges extends LitElement {
 
         .trigger-id {
             position: absolute;
-            top: -0.5em;
-            left: -0.5em;
+            top: -5px;
+            inset-inline-start: -5px;
             background: var(--accent-color);
             color: var(--text-primary-color);
             border-radius: 50vh;
@@ -117,6 +117,14 @@ class AbstractAutomationBadges extends LitElement {
                 .type="badge"
             >
                 ${data.trigger && data.id && this.config.showId ? html`<code class="trigger-id">${data.id}</code>` : ''}
+
+                ${data.condition && data.condition !== 'trigger' && this.config.showConditionStatus ? html`
+                    <automation-glance-condition-status
+                        .hass=${this.hass}
+                        .config=${this.config}
+                        .condition=${data}
+                    ></automation-glance-condition-status>    
+                ` : ''}
 
                 <ha-icon .icon=${icon}></ha-icon>
 

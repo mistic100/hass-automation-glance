@@ -2,6 +2,7 @@ import { version } from '../package.json';
 import './components/badges';
 import './components/card';
 import './components/item';
+import './components/condition-status';
 import { localize } from './localize';
 
 window.customCards = window.customCards || [];

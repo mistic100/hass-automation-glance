@@ -6,6 +6,7 @@
             "showToggle": "Bouton de bascule d'état",
             "showDescription": "Description de l'automatisation",
             "showConditions": "Conditions de l'automatisation",
+            "showConditionStatus": "Statut des conditions",
             "showId": "ID du déclencheur",
             "showTooltip": "Tooltip détaillé"
         }

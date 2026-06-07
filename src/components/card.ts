@@ -23,6 +23,14 @@ export class AutomationGlanceCard extends LitElement {
         }
     `;
 
+    connectedCallback(): void {
+        super.connectedCallback();
+
+        if (this.hass.config.version < '2026.6.0') {
+            this.config.showConditionStatus = false;
+        }
+    }
+
     render() {
         if (!this.hass || !this.config) {
             return nothing;
@@ -62,6 +70,7 @@ export class AutomationGlanceCard extends LitElement {
             showToggle: true,
             showDescription: true,
             showConditions: true,
+            showConditionStatus: true,
             showId: true,
             showTooltip: true,
             ...config,
@@ -97,6 +106,7 @@ export class AutomationGlanceCard extends LitElement {
                                 { name: 'showToggle', selector: { boolean: {} }, default: true },
                                 { name: 'showDescription', selector: { boolean: {} }, default: true },
                                 { name: 'showConditions', selector: { boolean: {} }, default: true },
+                                { name: 'showConditionStatus', selector: { boolean: {} }, default: true },
                                 { name: 'showId', selector: { boolean: {} }, default: true },
                                 { name: 'showTooltip', selector: { boolean: {} }, default: true },
                             ]
@@ -109,6 +119,7 @@ export class AutomationGlanceCard extends LitElement {
                     'showToggle',
                     'showDescription',
                     'showConditions',
+                    'showConditionStatus',
                     'showId',
                     'showTooltip',
                 ].includes(schema.name)) {

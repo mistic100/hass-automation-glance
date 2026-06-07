@@ -92,7 +92,8 @@ showTooltip: true
 | `showDescription` | boolean | `true` | Displays the description of the automation |
 | `showToggle` | boolean | `true` | Displays the automation activation toggle |
 | `showConditions` | boolean | `true` | Displays conditions bellow triggers |
-| `showId` | boolean | `true` | Displays specific triggers id as small badge |
+| `showConditionStatus` | boolean | `true` | Displays conditions status as a small badge (only supported since 2026.6.0) |
+| `showId` | boolean | `true` | Displays specific triggers id as a small badge |
 | `showTooltip` | boolean | `true` | Adds a tooltip to visualize the raw trigger configuration |
 
 
