@@ -1,7 +1,8 @@
 import { HomeAssistant } from 'custom-card-helpers';
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { localize } from '../localize';
+import { loadIcons } from '../icons';
+import { loadTranslations, localize } from '../localize';
 import { AutomationConfig, AutomationGlanceConfig } from '../types';
 
 @customElement('automation-glance-item')
@@ -96,39 +97,46 @@ export class AutomationGlanceItem extends LitElement {
         }
 
         try {
+            this.#currentId = this.entityId;
+
             const result = await this.hass.callWS<{ config: AutomationConfig }>({
                 type: 'automation/config',
                 entity_id: this.entityId
             });
 
-            // Load all device entities only once
-            // FIXME: invalidate cache on entities update
-            if (
-                result.config.triggers.some(trigger => trigger.trigger === 'device')
-                && !window.automationGlanceEntities
-            ) {
-                window.automationGlanceEntities = {};
-
-                const entities = await this.hass.callWS<any[]>({
-                    type: 'config/entity_registry/list',
-                });
-
-                entities
-                    .filter(entity => entity.device_id)
-                    .forEach(entity => {
-                        window.automationGlanceEntities[entity.id] = entity.entity_id;
-                    });
-            }
+            await this.loadDevices(result.config);
+            await loadTranslations(this.hass, result.config, this.config.showConditions!);
+            await loadIcons(this.hass, result.config, this.config.showConditions!);
 
             this.automation = result.config;
             this.error = null;
-            this.#currentId = this.entityId;
 
         } catch (err) {
             console.error(err);
             this.error = localize(this.hass, 'errors.fetchError');
             this.automation = null;
             this.#currentId = null;
+        }
+    }
+
+    // Load all device entities only once
+    // FIXME: invalidate cache on entities update
+    async loadDevices(config: AutomationConfig) {
+        if (
+            config.triggers.some(trigger => trigger.trigger === 'device')
+            && !window.automationGlanceEntities
+        ) {
+            window.automationGlanceEntities = {};
+
+            const entities = await this.hass.callWS<any[]>({
+                type: 'config/entity_registry/list',
+            });
+
+            entities
+                .filter(entity => entity.device_id)
+                .forEach(entity => {
+                    window.automationGlanceEntities[entity.id] = entity.entity_id;
+                });
         }
     }
 }

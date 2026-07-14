@@ -1,62 +1,10 @@
 import { HomeAssistant } from 'custom-card-helpers';
-import { LitElement, css, html, nothing } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { localize } from '../localize';
-import { renderCalendar } from '../renderers/calendar';
-import { renderConversation } from '../renderers/conversation';
-import { renderDevice } from '../renderers/device';
-import { renderEvent } from '../renderers/event';
-import { renderNumericState } from '../renderers/numericState';
-import { renderState } from '../renderers/state';
-import { renderSun } from '../renderers/sun';
-import { renderTag } from '../renderers/tag';
-import { renderTemplate } from '../renderers/template';
-import { renderTime } from '../renderers/time';
-import { renderTimePattern } from '../renderers/timePattern';
-import { renderTrigger } from '../renderers/trigger';
-import { renderZone } from '../renderers/zone';
+import { getIcon, ICONS } from '../icons';
+import { RENDERERS } from '../renderers';
+import { renderGeneric } from '../renderers/generic';
 import { AutomationCondition, AutomationConfig, AutomationGlanceConfig, AutomationTrigger, RenderFn } from '../types';
-
-const ICONS: Record<string, string> = {
-    _: 'mdi:robot',
-    and: 'mdi:ampersand',
-    not: 'mdi:not-equal-variant',
-    or: 'mdi:gate-or',
-
-    calendar: 'mdi:calendar',
-    conversation: 'mdi:forum-outline',
-    device: 'mdi:devices',
-    event: 'mdi:gesture-double-tap',
-    numeric_state: 'mdi:numeric',
-    state: 'mdi:state-machine',
-    sun: 'mdi:weather-sunny',
-    tag: 'mdi:nfc-variant',
-    template: 'mdi:code-braces',
-    time_pattern: 'mdi:av-timer',
-    time: 'mdi:clock-outline',
-    trigger: 'mdi:identifier',
-    webhook: 'mdi:webhook',
-    zone: 'mdi:map-marker-radius',
-};
-
-const RENDERERS: Record<string, RenderFn> = {
-    _: (hass, trigger) => localize(hass, 'errors.unsupportedDomain', { domain: trigger.trigger ?? trigger.condition }),
-    calendar: renderCalendar,
-    conversation: renderConversation,
-    device: renderDevice,
-    event: renderEvent,
-    numeric_state: renderNumericState,
-    state: renderState,
-    sun: renderSun,
-    tag: renderTag,
-    template: renderTemplate,
-    time_pattern: renderTimePattern,
-    time: renderTime,
-    trigger: renderTrigger,
-    webhook: () => '',
-    zone: renderZone,
-};
-
 
 class AbstractAutomationBadges extends LitElement {
 
@@ -108,8 +56,23 @@ class AbstractAutomationBadges extends LitElement {
 
     renderBadge(data: AutomationTrigger | AutomationCondition, id: string): ReturnType<typeof html> {
         const badgeId = `${this.automation.id}-${id}`;
-        const icon = ICONS[data.trigger ?? data.condition] ?? ICONS._;
-        const content = data.alias ?? (RENDERERS[data.trigger ?? data.condition] ?? RENDERERS._)(this.hass, data);
+        const [domain, event] = (data.trigger ?? data.condition).split('.');
+
+        let icon: string;
+        if (event) {
+            icon = getIcon(data.trigger ? 'trigger' : 'condition', domain, event);
+        } else {
+            icon = ICONS[data.trigger ?? data.condition] ?? ICONS._;
+        }
+
+        let content: ReturnType<RenderFn>;
+        if (data.alias) {
+            content = data.alias;
+        } else if (event) {
+            content = renderGeneric(this.hass, data);
+        } else {
+            content = (RENDERERS[domain] ?? RENDERERS._)(this.hass, data);
+        }
 
         return html`
             <ha-badge

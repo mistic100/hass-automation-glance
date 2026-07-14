@@ -12,13 +12,11 @@ export const renderState: RenderFn = (hass, trigger) => {
             .join(', ');
     };
 
-    let content = html`${getEntityName(hass, trigger.entity_id)}`;
+    const entityName = getEntityName(hass, trigger.entity_id);
 
-    if (trigger.attribute) {
-        content = html`${content} [${trigger.attribute}]`;
-    }
-
-    content = html`${content}: `;
+    let content = trigger.attribute 
+        ? html`${entityName} [${trigger.attribute}]: `
+        : html`${entityName}: `;
 
     // for triggers
     if (trigger.from) {

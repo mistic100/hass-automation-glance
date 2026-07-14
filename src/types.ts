@@ -16,6 +16,7 @@ export type AutomationTrigger = {
     trigger: string;
     enabled?: boolean;
     alias?: string;
+    options?: Record<string, any>;
     [K: string]: any;
 };
 
@@ -24,6 +25,7 @@ export type AutomationCondition = {
     enabled?: boolean;
     alias?: string;
     conditions?: AutomationCondition[];
+    options?: Record<string, any>;
     [K: string]: any;
 };
 
