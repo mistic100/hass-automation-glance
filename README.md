@@ -11,7 +11,7 @@ Home Assistant card to display details about automations.
 - Automation description
 - List of triggers and conditions
 
-> [!NOTE] Purpose specific triggers
+> [!NOTE]
 > Purpose specific triggers are supported through a generic renderer which loads icons and translations from the backend. Most trigger options are NOT supported yet.
 
 The following "legacy" trigger domains are supported:
