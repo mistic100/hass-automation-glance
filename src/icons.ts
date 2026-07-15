@@ -46,7 +46,7 @@ export async function loadIcons(hass: HomeAssistant, automation: AutomationConfi
 
     toLoad.trigger = listTriggerDomains(automation).filter(domain => !loadedIcons.trigger[domain]);
     if (showConditions) {
-        toLoad.condition = listConditionsDomains(automation).filter(domain => !loadedIcons.trigger[domain]);
+        toLoad.condition = listConditionsDomains(automation).filter(domain => !loadedIcons.condition[domain]);
     }
 
     for (let [category, integrations] of Object.entries(toLoad)) {

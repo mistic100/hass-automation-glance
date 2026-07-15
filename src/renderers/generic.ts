@@ -1,11 +1,15 @@
 import { RenderFn } from '../types';
-import { castArray, formatFor, getEntityName } from '../utils';
+import { castArray, formatFor, getEntityName, getEntityNameHex } from '../utils';
 
 export const renderGeneric: RenderFn = (hass, trigger) => {
     let content = '';
 
-    if (trigger.target?.entity_id) {
-        content = castArray(trigger.target.entity_id).map(entity_id => getEntityName(hass, entity_id)).join(', ') + ': ' 
+    const entities: string[] = [
+        ...castArray(trigger.target?.entity_id).map(entity_id => getEntityName(hass, entity_id)),
+        ...castArray(trigger.target?.device_id).map(device_id => getEntityNameHex(hass, device_id)),
+    ];
+    if (entities.length) {
+        content += entities.join(', ') + ': ' 
     }
 
     if (trigger.trigger) {

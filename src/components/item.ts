@@ -123,7 +123,7 @@ export class AutomationGlanceItem extends LitElement {
     // FIXME: invalidate cache on entities update
     async loadDevices(config: AutomationConfig) {
         if (
-            config.triggers.some(trigger => trigger.trigger === 'device')
+            config.triggers.some(trigger => trigger.device_id || trigger.target?.device_id)
             && !window.automationGlanceEntities
         ) {
             window.automationGlanceEntities = {};
@@ -135,7 +135,7 @@ export class AutomationGlanceItem extends LitElement {
             entities
                 .filter(entity => entity.device_id)
                 .forEach(entity => {
-                    window.automationGlanceEntities[entity.id] = entity.entity_id;
+                    window.automationGlanceEntities[entity.device_id] = entity.entity_id;
                 });
         }
     }

@@ -84,7 +84,7 @@ export async function loadTranslations(hass: HomeAssistant, automation: Automati
 
     toLoad.trigger = listTriggerDomains(automation).filter(domain => !loadedTranslations.trigger[domain]);
     if (showConditions) {
-        toLoad.condition = listConditionsDomains(automation).filter(domain => !loadedTranslations.trigger[domain]);
+        toLoad.condition = listConditionsDomains(automation).filter(domain => !loadedTranslations.condition[domain]);
     }
 
     for (let [category, integrations] of Object.entries(toLoad)) {
