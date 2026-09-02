@@ -1,6 +1,6 @@
 import { localize, localizeWeekday } from '../localize';
 import { RenderFn } from '../types';
-import { castArray, formatOffset, formatTime, getEntityName, isEntityId } from '../utils';
+import { castArray, formatOffset, getEntityName, isEntityId } from '../utils';
 
 const WORKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
 const WEEKEND = ['sat', 'sun'];
@@ -20,7 +20,7 @@ export const renderTime: RenderFn = (hass, trigger) => {
         } else if (isEntityId(trigger.at)) {
             content = getEntityName(hass, trigger.at);
         } else {
-            content = formatTime(trigger.at);
+            content = trigger.at;
         }
     }
 
@@ -28,11 +28,11 @@ export const renderTime: RenderFn = (hass, trigger) => {
     if (trigger.after) {
         if (isEntityId(trigger.after)) {
             content += localize(hass, 'triggers.time.after', {
-                after: getEntityName(hass, trigger.after)
+                after: getEntityName(hass, trigger.after),
             });
         } else {
             content += localize(hass, 'triggers.time.after', {
-                after: formatTime(trigger.after)
+                after: trigger.after,
             });
         }
     }
@@ -42,11 +42,11 @@ export const renderTime: RenderFn = (hass, trigger) => {
         }
         if (isEntityId(trigger.before)) {
             content += localize(hass, 'triggers.time.before', {
-                before: getEntityName(hass, trigger.before)
+                before: getEntityName(hass, trigger.before),
             });
         } else {
             content += localize(hass, 'triggers.time.before', {
-                before: formatTime(trigger.before)
+                before: trigger.before,
             });
         }
     }

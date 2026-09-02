@@ -31,10 +31,6 @@
             "above": "supérieur à {above}",
             "below": "inférieur à {below}"
         },
-        "sun": {
-            "sunrise": "lever du soleil",
-            "sunset": "coucher du soleil"
-        },
         "calendar": {
             "start": "début d'un événement",
             "end": "fin d'un événement"

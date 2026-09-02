@@ -1,5 +1,5 @@
 import { RenderFn } from '../types';
-import { castArray, formatFor, getEntityName, getEntityNameHex } from '../utils';
+import { castArray, formatFor, formatOffset, getEntityName, getEntityNameHex } from '../utils';
 
 export const renderGeneric: RenderFn = (hass, trigger) => {
     let content = '';
@@ -20,6 +20,32 @@ export const renderGeneric: RenderFn = (hass, trigger) => {
     if (trigger.condition) {
         const [domain, event] = trigger.condition.split('.');
         content += hass.localize(`component.${domain}.conditions.${event}.name`);
+    }
+
+    if (trigger.options?.offset) {
+        content += formatOffset(trigger.options.offset, trigger.options.offset_type === 'before');
+    }
+
+    if (trigger.options?.threshold) {
+        content += ` ${trigger.options.threshold.type} `;
+
+        content += [
+            trigger.options.threshold.value,
+            trigger.options.threshold.value_min,
+            trigger.options.threshold.value_max,
+        ]
+            .filter(val => !!val)
+            .map(val => {
+                switch (val.active_choice) {
+                    case 'number':
+                        return val.number + (val.unit_of_measurement ?? '');
+                    case 'entity':
+                        return getEntityName(hass, val.entity);
+                    default:
+                        return val.active_choice;
+                }
+            })
+            .join(', ');
     }
 
     if (trigger.options?.for) {

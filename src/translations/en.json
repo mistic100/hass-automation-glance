@@ -31,10 +31,6 @@
             "above": "above {above}",
             "below": "below {below}"
         },
-        "sun": {
-            "sunrise": "sunrise",
-            "sunset": "sunset"
-        },
         "calendar": {
             "start": "event starts",
             "end": "event ends"

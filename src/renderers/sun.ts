@@ -7,14 +7,14 @@ export const renderSun: RenderFn = (hass, trigger) => {
 
     // for triggers
     if (trigger.event) {
-        content += localize(hass, 'triggers.sun.' + trigger.event);
+        content += hass.localize(`component.sun.triggers.${trigger.event}.name`);
         content += formatOffset(trigger.offset);
     }
 
     // for conditions
     if (trigger.after) {
         content += localize(hass, 'triggers.time.after', {
-            after: localize(hass, 'triggers.sun.' + trigger.after),
+            after: hass.localize(`component.sun.triggers.${trigger.after}.name`),
         });
         content += formatOffset(trigger.after_offset);
     }
@@ -23,7 +23,7 @@ export const renderSun: RenderFn = (hass, trigger) => {
             content += localize(hass, 'triggers.and');
         }
         content += localize(hass, 'triggers.time.before', {
-            before: localize(hass, 'triggers.sun.' + trigger.before),
+            before: hass.localize(`component.sun.triggers.${trigger.before}.name`),
         });
         content += formatOffset(trigger.before_offset);
     }

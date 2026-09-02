@@ -12,7 +12,7 @@ export function getEntityName(hass: HomeAssistant, entityId: string): string {
 }
 
 export function getEntityNameHex(hass: HomeAssistant, id: string): string {
-    if (window.automationGlanceEntities[id]) {
+    if (window.automationGlanceEntities?.[id]) {
         return getEntityName(hass, window.automationGlanceEntities[id]);
     } else {
         return localize(hass, 'errors.unknownEntity', { entity: id });
@@ -49,35 +49,34 @@ export function castArray<T>(val: T | T[]): T[] {
     return Array.isArray(val) ? val : (val ? [val] : []);
 }
 
-function formatTimeInternal(hours: number, minutes: number, seconds: number, forceSign: boolean): string {
-    hours = hours ?? 0;
-    const sign = hours < 0 ? '-' : (forceSign ? '+' : '');
-    hours = Math.abs(hours);
-    return `${sign}${leftPad(hours ?? 0, 2, '0')}:${leftPad(minutes ?? 0, 2, '0')}:${leftPad(seconds ?? 0, 2, '0')}`;
+function formatTime(days: number, hours: number, minutes: number, seconds: number, opt?: {
+    forceSign?: boolean,
+    forceNegative?: boolean,
+}): string {
+    let result = opt?.forceSign ? '+' : '';
+    if (opt?.forceNegative || hours < 0 || minutes < 0 || seconds < 0) {
+        result = '-';
+    }
+    if (days) {
+        result += `${days}d `;
+    }
+    if (hours || minutes || seconds) {
+        result += `${leftPad(Math.abs(hours ?? 0), 2, '0')}:${leftPad(Math.abs(minutes ?? 0), 2, '0')}:${leftPad(Math.abs(seconds ?? 0), 2, '0')}`;
+    }
+    return result;
 }
 
-export function formatTime(time: string, forceSign = false, stripEmpty = false): string {
-    const match = time.match(/^([-+]?[0-9]+):([0-9]+):([0-9]+)$/);
-    if (!match) {
-        return 'unknown';
-    }
-    const h = parseInt(match[1]);
-    const m = parseInt(match[2]);
-    const s = parseInt(match[3]);
-    if (!h && !m && !s && stripEmpty) {
-        return '';
-    }
-    return formatTimeInternal(h, m, s, forceSign);
-}
-
-export function formatOffset(triggerOffset: string | { hours: number, minutes: number, seconds: number }): string {
+export function formatOffset(triggerOffset: string | { days: number, hours: number, minutes: number, seconds: number }, forceNegative = false): string {
     if (typeof triggerOffset === 'object') {
-        if (!triggerOffset.hours && !triggerOffset.minutes && !triggerOffset.seconds) {
+        if (!triggerOffset.days && !triggerOffset.hours && !triggerOffset.minutes && !triggerOffset.seconds) {
             return '';
         }
-        return ' ' + formatTimeInternal(triggerOffset.hours, triggerOffset.minutes, triggerOffset.seconds, true);
+        return ' ' + formatTime(triggerOffset.days, triggerOffset.hours, triggerOffset.minutes, triggerOffset.seconds, {
+            forceSign: true,
+            forceNegative,
+        });
     } else if (triggerOffset) {
-        return ' ' + formatTime(triggerOffset, true, true);
+        return ' ' + (!['+', '-'].includes(triggerOffset[0]) ? '+' : '') + triggerOffset;
     } else {
         return '';
     }
@@ -89,11 +88,11 @@ export function formatFor(hass: HomeAssistant, triggerFor: string | { hours: num
             return '';
         }
         return localize(hass, 'triggers.for', {
-            for: formatTimeInternal(triggerFor.hours, triggerFor.minutes, triggerFor.seconds, false)
+            for: formatTime(0, triggerFor.hours, triggerFor.minutes, triggerFor.seconds)
         });
     } else if (triggerFor && !/^0+:0+:0+$/.test(triggerFor)) {
         return localize(hass, 'triggers.for', {
-            for: formatTime(triggerFor)
+            for: triggerFor,
         });
     } else {
         return '';
