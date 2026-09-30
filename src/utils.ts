@@ -54,24 +54,24 @@ function formatTime(days: number, hours: number, minutes: number, seconds: numbe
     forceNegative?: boolean,
 }): string {
     let result = opt?.forceSign ? '+' : '';
-    if (opt?.forceNegative || hours < 0 || minutes < 0 || seconds < 0) {
+    if (opt?.forceNegative || days < 0 || hours < 0 || minutes < 0 || seconds < 0) {
         result = '-';
     }
     if (days) {
-        result += `${days}d `;
+        result += `${Math.abs(days)}d `;
     }
     if (hours || minutes || seconds) {
-        result += `${leftPad(Math.abs(hours ?? 0), 2, '0')}:${leftPad(Math.abs(minutes ?? 0), 2, '0')}:${leftPad(Math.abs(seconds ?? 0), 2, '0')}`;
+        result += `${leftPad(Math.abs(hours), 2, '0')}:${leftPad(Math.abs(minutes), 2, '0')}:${leftPad(Math.abs(seconds), 2, '0')}`;
     }
     return result;
 }
 
-export function formatOffset(triggerOffset: string | { days: number, hours: number, minutes: number, seconds: number }, forceNegative = false): string {
+export function formatOffset(triggerOffset: string | { days?: number, hours?: number, minutes?: number, seconds?: number }, forceNegative = false): string {
     if (typeof triggerOffset === 'object') {
         if (!triggerOffset.days && !triggerOffset.hours && !triggerOffset.minutes && !triggerOffset.seconds) {
             return '';
         }
-        return ' ' + formatTime(triggerOffset.days, triggerOffset.hours, triggerOffset.minutes, triggerOffset.seconds, {
+        return ' ' + formatTime(triggerOffset.days ?? 0, triggerOffset.hours ?? 0, triggerOffset.minutes ?? 0, triggerOffset.seconds ?? 0, {
             forceSign: true,
             forceNegative,
         });
@@ -82,13 +82,13 @@ export function formatOffset(triggerOffset: string | { days: number, hours: numb
     }
 }
 
-export function formatFor(hass: HomeAssistant, triggerFor: string | { hours: number, minutes: number, seconds: number }): string {
+export function formatFor(hass: HomeAssistant, triggerFor: string | { hours?: number, minutes?: number, seconds?: number }): string {
     if (typeof triggerFor === 'object') {
         if (!triggerFor.hours && !triggerFor.minutes && !triggerFor.seconds) {
             return '';
         }
         return localize(hass, 'triggers.for', {
-            for: formatTime(0, triggerFor.hours, triggerFor.minutes, triggerFor.seconds)
+            for: formatTime(0, triggerFor.hours ?? 0, triggerFor.minutes ?? 0, triggerFor.seconds ?? 0)
         });
     } else if (triggerFor && !/^0+:0+:0+$/.test(triggerFor)) {
         return localize(hass, 'triggers.for', {

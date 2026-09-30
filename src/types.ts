@@ -12,11 +12,38 @@ export type AutomationGlanceConfig = {
     showTooltip?: boolean;
 };
 
+type ThresholdValue = {
+    active_choice: 'number' | 'entity';
+    number?: number;
+    unit_of_measurement?: string;
+    entity?: string;
+};
+
+type AutomationTriggerOptions = {
+    offset?: { days?: number, hours?: number, minutes?: number, seconds?: number };
+    offset_type?: 'before' | 'after';
+    threshold?: {
+        type: string;
+        value?: ThresholdValue;
+        value_min?: ThresholdValue;
+        value_max?: ThresholdValue;
+    };
+    for?: { hours?: number, minutes?: number, seconds?: number };
+    zone?: string | string[];
+    option?: string | string[];
+};
+
+type AutomationTriggerTarget = {
+    entity_id?: string | string[];
+    device_id?: string | string[];
+};
+
 export type AutomationTrigger = {
     trigger: string;
     enabled?: boolean;
     alias?: string;
-    options?: Record<string, any>;
+    target?: AutomationTriggerTarget;
+    options?: AutomationTriggerOptions;
     [K: string]: any;
 };
 
@@ -24,8 +51,9 @@ export type AutomationCondition = {
     condition: string;
     enabled?: boolean;
     alias?: string;
+    target?: AutomationTriggerTarget;
+    options?: AutomationTriggerOptions;
     conditions?: AutomationCondition[];
-    options?: Record<string, any>;
     [K: string]: any;
 };
 

@@ -5,8 +5,8 @@ export const renderGeneric: RenderFn = (hass, trigger) => {
     let content = '';
 
     const entities: string[] = [
-        ...castArray(trigger.target?.entity_id).map(entity_id => getEntityName(hass, entity_id)),
-        ...castArray(trigger.target?.device_id).map(device_id => getEntityNameHex(hass, device_id)),
+        ...castArray(trigger.target?.entity_id).map(entity_id => getEntityName(hass, entity_id!)),
+        ...castArray(trigger.target?.device_id).map(device_id => getEntityNameHex(hass, device_id!)),
     ];
     if (entities.length) {
         content += entities.join(', ') + ': ' 
@@ -40,7 +40,7 @@ export const renderGeneric: RenderFn = (hass, trigger) => {
                     case 'number':
                         return val.number + (val.unit_of_measurement ?? '');
                     case 'entity':
-                        return getEntityName(hass, val.entity);
+                        return getEntityName(hass, val.entity!);
                     default:
                         return val.active_choice;
                 }
@@ -53,7 +53,11 @@ export const renderGeneric: RenderFn = (hass, trigger) => {
     }
 
     if (trigger.options?.zone) {
-        content += ` (${getEntityName(hass, trigger.options.zone)})`;
+        content += ` (${castArray(trigger.options.zone).map(zone => getEntityName(hass, zone)).join(', ')})`;
+    }
+
+    if (trigger.options?.option) {
+        content += ` (${castArray(trigger.options.option).join(', ')})`;
     }
 
     return content;

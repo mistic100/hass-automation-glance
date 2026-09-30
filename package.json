@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "custom-card-helpers": "^2.0.0",
-    "lit": "^3.3.2"
+    "lit": "^3.3.3"
   },
   "devDependencies": {
-    "esbuild": "^0.27.3"
+    "esbuild": "^0.27.7"
   }
 }

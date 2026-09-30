@@ -33,7 +33,6 @@ The following "legacy" trigger domains are supported:
 
 Limitations:
 
-- uses custom translations, not always identical to the automation editor (but shorter)
 - device triggers are not translated
 - automation actions are not displayed, this is currently not the goal of this card
 
