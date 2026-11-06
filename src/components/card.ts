@@ -3,6 +3,7 @@ import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { localize } from '../localize';
 import { AutomationGlanceConfig } from '../types';
+import { versionCompare } from '../utils';
 
 @customElement('automation-glance')
 export class AutomationGlanceCard extends LitElement {
@@ -26,7 +27,7 @@ export class AutomationGlanceCard extends LitElement {
     connectedCallback(): void {
         super.connectedCallback();
 
-        if (this.hass.config.version < '2026.6.0') {
+        if (versionCompare(this.hass.config.version, '2026.6.0') < 0) {
             this.config.showConditionStatus = false;
         }
     }
