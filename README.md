@@ -39,13 +39,11 @@ Limitations:
 
 ## Installation
 
-### HACS
+### Marketplace
 
-The card is available in [HACS](https://hacs.xyz/).
+The card is available in Home Assistant Marketplace.
 
-Simply click on the button to open the repository in HACS or search for "Automation Glance" and download it through the UI.
-
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mistic100&repository=hass-automation-glance&category=plugin)
+[![Open your Home Assistant instance and browse the Marketplace.](https://my.home-assistant.io/badges/marketplace_browse.svg)](https://my.home-assistant.io/redirect/marketplace_browse/?search=Automation+Glance)
 
 ### Manual
 
